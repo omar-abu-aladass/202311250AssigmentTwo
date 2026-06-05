@@ -1,0 +1,30 @@
+--Q1 answer
+SELECT customer_id, COUNT(order_id) AS total_orders
+FROM Orders
+GROUP BY customer_id;
+
+SELECT customer_id, COUNT(order_id) AS total_orders
+FROM Orders
+GROUP BY customer_id
+HAVING COUNT(order_id) > (
+    SELECT AVG(order_count)
+    FROM (
+        SELECT COUNT(order_id) AS order_count
+        FROM Orders
+        GROUP BY customer_id
+    ) AS subquery
+);
+CREATE INDEX idx_customer_id ON Orders(customer_id);
+BEGIN TRANSACTION;
+
+INSERT INTO Orders(order_id, customer_id, order_date, total_amount)
+VALUES (101, 1, '2026-04-10', 200);
+
+INSERT INTO Order_Items(item_id, order_id, product_name, quantity, price)
+VALUES (1, 101, 'Laptop', 1, 200);
+
+COMMIT;
+--Q2 answer 
+SELECT day, qty,
+       SUM(qty) OVER (ORDER BY day) AS cumQty
+FROM demand;
